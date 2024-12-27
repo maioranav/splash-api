@@ -20,4 +20,26 @@ export default class NonceMiddleware {
          res.status(401).json({ error });
       }
    };
+
+   public static verifyNonceInQueryParams = async (
+      req: Request,
+      res: Response,
+      next: NextFunction
+   ) => {
+      const nonce = req.query["nonce"];
+      if (!nonce) return res.status(401).json({ error: "Invalid Nonce!" });
+
+      try {
+         const isNonceValid = await MainConfService.validateNonce(nonce as string);
+         if (!isNonceValid) {
+            res.status(403).json({ error: "Access denied" });
+            return;
+         }
+
+         next();
+      } catch (error) {
+         debug("Authentication Error!", { data: "Invalid Nonce", status: "error" });
+         res.status(401).json({ error });
+      }
+   };
 }

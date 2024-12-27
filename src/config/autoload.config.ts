@@ -4,6 +4,7 @@ import AdminService from "../services/admin.service";
 import { MainConf } from "../model/MainConf";
 import { MainType } from "../model/mainconf.enum";
 import { randomUUID } from "crypto";
+import LiveService from "../services/live.service";
 
 export const AutoLoad = async () => {
    const mainAdmin = new Admin();
@@ -37,4 +38,7 @@ export const AutoLoad = async () => {
    } catch (e) {
       console.error(e);
    }
+
+   LiveService.instance.sendOnAirTitleEvent();
+   LiveService.instance.sendOnAirImageEvent();
 };

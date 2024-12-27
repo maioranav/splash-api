@@ -23,21 +23,21 @@ export default class AdminController implements Controller {
 
          const user = await AdminService.findByUserName(username);
          if (!user) {
-            debug("User does not exist", {data: username, status: "error"})
+            debug("User does not exist", { data: username, status: "error" });
             throw new Error("Not authorized");
-      };
+         }
 
          const match = await AdminService.passwordMatch(password, user);
          if (!match) {
-            debug("Wrong password", {data: username, status: "error"})
+            debug("Wrong password", { data: username, status: "error" });
             throw new Error("Not Authorized");
-      };
+         }
 
-      debug("User authenticated", {data : username, status: "success"})
+         debug("User authenticated", { data: username, status: "success" });
 
          response.status(200).json({ token: AdminService.generateToken(user.id) });
-      } catch (error) {
-         response.status(403).json({ error });
+      } catch (error: any) {
+         response.status(403).json({ error: error.message });
       }
    };
 }

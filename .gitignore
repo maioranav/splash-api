@@ -5,6 +5,7 @@ build/
 tmp/
 temp/
 uploads/
+meta/
 .env
 .scannerwork
 .dccache
