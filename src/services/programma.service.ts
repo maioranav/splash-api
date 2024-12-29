@@ -35,7 +35,8 @@ export default class ProgrammaService {
       const validationErrors = await validate(newProg);
       if (validationErrors?.length > 0) throw new Error(validationErrors + "");
 
-      return await AppDataSource.getRepository(Programma).update(id, newProg);
+      newProg.id = id;
+      return await AppDataSource.getRepository(Programma).save(newProg);
    };
 
    public static deleteByID = async (id: string) => {
