@@ -6,6 +6,7 @@ import MainConfController from "../controller/mainconf.controller";
 import ImagesController from "../controller/images.controller";
 import ProgrammaController from "../controller/programma.controller";
 import LiveController from "../controller/live.controller";
+import AppuntamentoController from "../controller/appuntamento.controller";
 
 // Environment constraints
 dotenv.config();
@@ -19,6 +20,7 @@ export const apiConfig: ApiConfig = {
       new StaffController(),
       new ImagesController(),
       new ProgrammaController(),
+      new AppuntamentoController(),
       new LiveController()
    ]
 };
