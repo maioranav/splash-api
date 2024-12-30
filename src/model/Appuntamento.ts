@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
 import { Programma } from "./Programma";
-import { Giorni } from "./giorni.enum";
+import { Giorni } from "../types/giorni.enum";
 
 @Entity()
 export class Appuntamento {

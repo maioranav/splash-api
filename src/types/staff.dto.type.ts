@@ -1,6 +1,6 @@
 import { Programma } from "../model/Programma";
 import { SocialContacts } from "../model/SocialContacts";
-import { Ruoli } from "../model/ruoli.enum";
+import { Ruoli } from "./ruoli.enum";
 
 export interface CreateStaff {
    nome: string;

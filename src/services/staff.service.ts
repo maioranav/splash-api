@@ -1,11 +1,15 @@
 import { validate } from "class-validator";
 import { AppDataSource } from "../config/data-source.config";
 import { Staff } from "../model/Staff";
-import { CreateStaff } from "../types/staff.type";
+import { CreateStaff } from "../types/staff.dto.type";
 
 export default class StaffService {
    public static getAll = async () => {
-      const staff = await AppDataSource.getRepository(Staff).find();
+      const staff = await AppDataSource.getRepository(Staff).find({
+         relations: {
+            social: true
+         }
+      });
       return staff;
    };
 
