@@ -7,6 +7,7 @@ import ImagesController from "../controller/images.controller";
 import ProgrammaController from "../controller/programma.controller";
 import LiveController from "../controller/live.controller";
 import AppuntamentoController from "../controller/appuntamento.controller";
+import MailerController from "../controller/mailer.controller";
 
 // Environment constraints
 dotenv.config();
@@ -21,6 +22,17 @@ export const apiConfig: ApiConfig = {
       new ImagesController(),
       new ProgrammaController(),
       new AppuntamentoController(),
-      new LiveController()
+      new LiveController(),
+      new MailerController()
    ]
+};
+
+export const mailConfig = {
+   host: process.env.SMTP_MAIL_HOST || "smtp.gmail.com",
+   port: Number(process.env.SMTP_MAIL_PORT) || 587,
+   secure: false,
+   auth: {
+      user: process.env.SMTP_MAIL_USER,
+      pass: process.env.SMTP_MAIL_PASS
+   }
 };
