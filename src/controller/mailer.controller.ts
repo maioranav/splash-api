@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import { Controller } from "../types/main.type";
 import NonceMiddleware from "../middleware/nonce.middleware";
 import { MailerService } from "../services/mailer.service";
+import RecaptchaMiddleware from "../middleware/recaptcha.middleware";
 
 export default class MailerController implements Controller {
    public path = "/mailer";
@@ -12,7 +13,12 @@ export default class MailerController implements Controller {
    }
 
    private initRoutes() {
-      this.router.post("/", NonceMiddleware.verifyNonce, this.sendMailFromWeb);
+      this.router.post(
+         "/",
+         NonceMiddleware.verifyNonce,
+         RecaptchaMiddleware.verifyRecaptcha,
+         this.sendMailFromWeb
+      );
    }
 
    private sendMailFromWeb = async (request: Request, response: Response) => {
