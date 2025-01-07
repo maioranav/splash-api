@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import { Controller } from "../types/main.type";
 import AdminService from "../services/admin.service";
 import { debug } from "../utils/debug.util";
+import RecaptchaMiddleware from "../middleware/recaptcha.middleware";
 
 export default class AdminController implements Controller {
    public path = "/admin";
@@ -12,7 +13,8 @@ export default class AdminController implements Controller {
    }
 
    private initRoutes() {
-      this.router.post("/login", this.login);
+      this.router.post("/apilogin", this.login); // TODO: remove afert deployment
+      this.router.post("/login", RecaptchaMiddleware.verifyRecaptcha, this.login);
    }
 
    private login = async (request: Request, response: Response) => {
