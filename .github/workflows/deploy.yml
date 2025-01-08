@@ -27,7 +27,7 @@ jobs:
 
          # Step 4: Login al registro di Oracle
          - name: Log in to Oracle Container Registry
-           run: echo "${{ secrets.OCR_PASSWORD }}" | docker login -u ${{ secrets.OCR_USERNAME }} ${{ secrets.OCR_REGISTRY }} --password-stdin
+           run: echo "${{ secrets.OCR_PASSWORD }}" | docker login ${{ secrets.OCR_REGISTRY }} -u ${{ secrets.OCR_USERNAME }} --password-stdin
 
          # Step 5: Build e push dell'immagine Docker
          - name: Build and push Docker image
