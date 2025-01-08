@@ -42,20 +42,20 @@ jobs:
               docker build -t ${{ secrets.OCR_REGISTRY }}/${{ secrets.OCR_TENANT }}/vmrepo/splash-api:${{ env.VERSION }} .
               docker push ${{ secrets.OCR_REGISTRY }}/${{ secrets.OCR_TENANT }}/vmrepo/splash-api:${{ env.VERSION }}
 
-         # Step 6: Setup kubectl
-         - name: Setup kubectl
-           run: |
-              echo "${{ secrets.KUBECONFIG }}" > kubeconfig
-              export KUBECONFIG=$PWD/kubeconfig
-              kubectl version
-
-         # Step 2: Install OCI CLI
+         # Step 6: Install OCI CLI
          - name: Install OCI CLI
            run: |
               sudo apt-get update
               sudo apt-get install -y python3-pip
               pip3 install oci-cli
               oci --version
+
+         # Step 6b: Setup kubectl
+         - name: Setup kubectl
+           run: |
+              echo "${{ secrets.KUBECONFIG }}" > kubeconfig
+              export KUBECONFIG=$PWD/kubeconfig
+              kubectl version
 
          # Step 7: Passa variabili dal file .env
          - name: Apply .env variables to ConfigMap
