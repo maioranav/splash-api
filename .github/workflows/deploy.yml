@@ -39,8 +39,8 @@ jobs:
          # Step 5: Build e push dell'immagine Docker
          - name: Build and push Docker image
            run: |
-              docker build -t ${{ secrets.OCR_REGISTRY }}/vmrepo/splash-api:${{ env.VERSION }} .
-              docker push ${{ secrets.OCR_REGISTRY }}/vmrepo/splash-api:${{ env.VERSION }}
+              docker build -t ${{ secrets.OCR_REGISTRY }}/${{ secrets.OCR_TENANT }}/vmrepo/splash-api:${{ env.VERSION }} .
+              docker push ${{ secrets.OCR_REGISTRY }}/${{ secrets.OCR_TENANT }}/vmrepo/splash-api:${{ env.VERSION }}
 
          # Step 6: Setup kubectl
          - name: Setup kubectl
@@ -57,5 +57,5 @@ jobs:
          # Step 9: Deploy su Kubernetes
          - name: Deploy to Kubernetes
            run: |
-              kubectl set image deployment/splash-api splash-api=${{ secrets.OCR_REGISTRY }}/vmrepo/splash-api:${{ env.VERSION }}
+              kubectl set image deployment/splash-api splash-api=${{ secrets.OCR_REGISTRY }}/${{ secrets.OCR_TENANT }}/vmrepo/splash-api:${{ env.VERSION }}
               kubectl rollout status deployment/splash-api
