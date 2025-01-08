@@ -14,7 +14,7 @@ dotenv.config();
 
 export const apiConfig: ApiConfig = {
    name: "Splash Main BE",
-   port: Number(process.env.PORT) || 3000,
+   port: Number(process.env.PORT) || 3001,
    controllers: [
       new AdminController(),
       new MainConfController(),
