@@ -40,7 +40,8 @@ export const mailConfig = {
 
 const ftpOptions: FtpServerOptions = {
    url: "ftp://" + (process.env.FTP_HOST || "0.0.0.0") + ":" + (process.env.FTP_PORT || "21"),
-   anonymous: false
+   anonymous: false,
+   blacklist: ["MKD"]
 };
 
 export const ftpConfig = {
