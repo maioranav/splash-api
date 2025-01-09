@@ -13,6 +13,12 @@ jobs:
    build-and-deploy:
       runs-on: ubuntu-latest
       environment: OCI
+      env:
+         OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
+         OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
+         OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
+         OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
+         OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
 
       steps:
          # Step 1: Checkout il codice
@@ -39,31 +45,21 @@ jobs:
          # Step 5: Build e push dell'immagine Docker
          - name: Build and push Docker image
            run: |
-              docker build -t ${{ secrets.OCR_REGISTRY }}/${{ secrets.OCR_TENANT }}/vmrepo/splash-api:${{ env.VERSION }} .
-              docker push ${{ secrets.OCR_REGISTRY }}/${{ secrets.OCR_TENANT }}/vmrepo/splash-api:${{ env.VERSION }}
+              docker build -t ${{ secrets.OCR_REGISTRY }}/${{ secrets.OCR_TENANT }}/splash-api:${{ env.VERSION }} .
+              docker push ${{ secrets.OCR_REGISTRY }}/${{ secrets.OCR_TENANT }}/splash-api:${{ env.VERSION }}
 
-         # Step 6: Install OCI CLI
-         - name: Install OCI CLI
-           run: |
-              sudo apt-get update
-              sudo apt-get install -y python3-pip
-              pip3 install oci-cli
-              oci --version
+         # Step 6: Configure K8s on OCI
+         - name: Configure Kubectl
+           uses: oracle-actions/configure-kubectl-oke@v1.5.0
+           id: test-configure-kubectl-oke-action
+           with:
+              cluster: ${{ secrets.OKE_CLUSTER_OCID }}
 
-         # Step 6b: Setup kubectl
-         - name: Setup kubectl
-           run: |
-              echo "${{ secrets.KUBECONFIG }}" > kubeconfig
-              export KUBECONFIG=$PWD/kubeconfig
-              kubectl version
+         - name: Run Kubectl
+           run: kubectl get nodes -A
 
-         # Step 7: Passa variabili dal file .env
-         - name: Apply .env variables to ConfigMap
-           run: |
-              kubectl create configmap app-env --from-env-file=.env --dry-run=client -o yaml | kubectl apply -f -
-
-         # Step 9: Deploy su Kubernetes
+         # Step 7: Deploy su Kubernetes
          - name: Deploy to Kubernetes
            run: |
-              kubectl set image deployment/splash-api splash-api=${{ secrets.OCR_REGISTRY }}/${{ secrets.OCR_TENANT }}/vmrepo/splash-api:${{ env.VERSION }}
+              kubectl set image deployment/splash-api splash-api=${{ secrets.OCR_REGISTRY }}/${{ secrets.OCR_TENANT }}/splash-api:${{ env.VERSION }}
               kubectl rollout status deployment/splash-api
