@@ -1,13 +1,15 @@
 import { AppDataSource } from "./config/data-source.config";
 import API from "./model/API";
 import { AutoLoad } from "./config/autoload.config";
-import { apiConfig } from "./config/app.config";
+import { apiConfig, ftpConfig } from "./config/app.config";
 import { debug } from "./utils/debug.util";
 import ImageService from "./services/image.service";
 import Scheduler from "./model/Scheduler";
 import LiveService from "./services/live.service";
+import FTP from "./model/FTP";
 
 const api = new API(apiConfig);
+const ftp = new FTP(ftpConfig);
 const scheduler = new Scheduler();
 
 //Check if the folder exists
@@ -28,3 +30,4 @@ AppDataSource.initialize()
 //Run API server
 api.listen();
 scheduler.scheduleTasks();
+ftp.listen();

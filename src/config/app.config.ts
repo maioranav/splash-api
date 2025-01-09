@@ -8,6 +8,7 @@ import ProgrammaController from "../controller/programma.controller";
 import LiveController from "../controller/live.controller";
 import AppuntamentoController from "../controller/appuntamento.controller";
 import MailerController from "../controller/mailer.controller";
+import { FtpServerOptions } from "ftp-srv";
 
 // Environment constraints
 dotenv.config();
@@ -35,4 +36,16 @@ export const mailConfig = {
       user: process.env.SMTP_MAIL_USER,
       pass: process.env.SMTP_MAIL_PASS
    }
+};
+
+const ftpOptions: FtpServerOptions = {
+   url: "ftp://" + (process.env.FTP_HOST || "0.0.0.0") + ":" + (process.env.FTP_PORT || "21"),
+   anonymous: false
+};
+
+export const ftpConfig = {
+   enable: Boolean(process.env.FTP_ENABLE || "false"),
+   username: process.env.FTP_USER || "baseuser",
+   password: process.env.FTP_PASS || "basepassword",
+   options: ftpOptions
 };
