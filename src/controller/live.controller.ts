@@ -21,7 +21,7 @@ export default class LiveController implements Controller {
    }
 
    private getOnAirData = async (request: Request, response: Response) => {
-      LiveService.instance.handleOnAirClients(request, response);
+      await LiveService.instance.handleOnAirClients(request, response);
    };
 
    private postOnAirTitle = async (request: Request, response: Response) => {

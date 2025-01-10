@@ -10,6 +10,7 @@ export default class LiveService {
    private titleFilePath = path.join("./meta", "OnAir.txt");
    private imageFilePath = path.join("./meta", "OnAir.jpg");
    private titleLastMod: number = 0;
+   private imageLastMod: number = 0;
    private upload: multer.Multer;
 
    public static get instance(): LiveService {
@@ -21,6 +22,8 @@ export default class LiveService {
 
    private constructor() {
       this.upload = this.configureMulter();
+      this.sendOnAirTitleEvent();
+      this.sendOnAirImageEvent();
    }
 
    private configureMulter() {
@@ -52,7 +55,7 @@ export default class LiveService {
 
       // Aggiungi il client alla lista
       this.onAirClients.push(res);
-      debug("New Client:", { data: res, status: "success" });
+      debug("New SSE Client", { status: "success" });
 
       const title = fs.readFileSync(this.titleFilePath, "utf8");
       const base64Image = await LiveService.getImageAsBase64(this.imageFilePath);
@@ -94,8 +97,8 @@ export default class LiveService {
          if (eventType === "change") {
             // Ottieni il tempo di modifica del file
             const stats = fs.statSync(this.imageFilePath);
-            if (stats.mtimeMs != this.titleLastMod) {
-               this.titleLastMod = stats.mtimeMs;
+            if (stats.mtimeMs != this.imageLastMod) {
+               this.imageLastMod = stats.mtimeMs;
 
                // Leggi il contenuto del file
                const base64Image = await LiveService.getImageAsBase64(this.imageFilePath);

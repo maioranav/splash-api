@@ -38,7 +38,4 @@ export const AutoLoad = async () => {
    } catch (e) {
       console.error(e);
    }
-
-   LiveService.debounce(LiveService.instance.sendOnAirTitleEvent, 300);
-   LiveService.debounce(LiveService.instance.sendOnAirImageEvent, 300);
 };
