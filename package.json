@@ -1,6 +1,6 @@
 {
    "name": "splash-api",
-   "version": "0.0.8",
+   "version": "0.0.9",
    "description": "Backend for radiosplash.it",
    "main": "index.js",
    "scripts": {

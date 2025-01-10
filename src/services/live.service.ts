@@ -220,4 +220,12 @@ export default class LiveService {
          res.status(200).json({ message: "Immagine aggiornata con successo" });
       });
    };
+
+   public static debounce = (func: Function, wait: number) => {
+      let timeout: NodeJS.Timeout | null;
+      return (...args: any[]) => {
+         if (timeout) clearTimeout(timeout);
+         timeout = setTimeout(() => func(...args), wait);
+      };
+   };
 }
