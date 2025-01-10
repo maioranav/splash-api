@@ -14,19 +14,14 @@ export default class LiveController implements Controller {
 
    private initRoutes() {
       // Use as server-sent-events with x-fe-nonce in queryparams
-      this.router.get("/title", NonceMiddleware.verifyNonceInQueryParams, this.getOnAirTitle);
-      this.router.get("/cover", NonceMiddleware.verifyNonceInQueryParams, this.getOnAirCover);
+      this.router.get("/", NonceMiddleware.verifyNonceInQueryParams, this.getOnAirData);
       // Use basic auth for MBStudio compatibility
       this.router.post("/title", MBAuthMiddleware.verifyAuth, this.postOnAirTitle);
       this.router.post("/cover", MBAuthMiddleware.verifyAuth, this.postOnAirCover);
    }
 
-   private getOnAirTitle = async (request: Request, response: Response) => {
-      LiveService.instance.handleOnAirTitleClients(request, response);
-   };
-
-   private getOnAirCover = async (request: Request, response: Response) => {
-      LiveService.instance.handleOnAirImageClients(request, response);
+   private getOnAirData = async (request: Request, response: Response) => {
+      LiveService.instance.handleOnAirClients(request, response);
    };
 
    private postOnAirTitle = async (request: Request, response: Response) => {

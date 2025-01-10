@@ -1,6 +1,6 @@
 {
-   "name": "splashbe",
-   "version": "0.0.7",
+   "name": "splash-api",
+   "version": "0.0.8",
    "description": "Backend for radiosplash.it",
    "main": "index.js",
    "scripts": {
@@ -10,14 +10,14 @@
    },
    "repository": {
       "type": "git",
-      "url": "git+https://github.com/maioranav/splashbe.git"
+      "url": "git+https://github.com/maioranav/splash-api.git"
    },
    "author": "Vincenzo Maiorana",
    "license": "MIT",
    "bugs": {
-      "url": "https://github.com/maioranav/splashbe/issues"
+      "url": "https://github.com/maioranav/splash-api/issues"
    },
-   "homepage": "https://github.com/maioranav/splashbe#readme",
+   "homepage": "https://github.com/maioranav/splash-api#readme",
    "dependencies": {
       "@types/dotenv": "^8.2.0",
       "@types/express": "^4.17.21",

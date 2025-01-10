@@ -6,8 +6,7 @@ import multer from "multer";
 
 export default class LiveService {
    private static _instance: LiveService;
-   private onAirTitleClients: Response[] = [];
-   private onAirImageClients: Response[] = [];
+   private onAirClients: Response[] = [];
    private titleFilePath = path.join("./meta", "OnAir.txt");
    private imageFilePath = path.join("./meta", "OnAir.jpg");
    private titleLastMod: number = 0;
@@ -46,41 +45,25 @@ export default class LiveService {
       });
    }
 
-   public handleOnAirTitleClients = (req: Request, res: Response) => {
+   public handleOnAirClients = async (req: Request, res: Response) => {
       res.setHeader("Content-Type", "text/event-stream");
       res.setHeader("Cache-Control", "no-cache");
       res.setHeader("Connection", "keep-alive");
 
       // Aggiungi il client alla lista
-      this.onAirTitleClients.push(res);
-      debug("New Client for Title:", { data: res, status: "success" });
-      const content = fs.readFileSync(this.titleFilePath, "utf8");
-      res.write(`data: ${JSON.stringify({ content })}\n\n`);
+      this.onAirClients.push(res);
+      debug("New Client:", { data: res, status: "success" });
 
-      // Rimuovi il client alla chiusura della connessione
-      req.on("close", () => {
-         const index = this.onAirTitleClients.indexOf(res);
-         if (index !== -1) {
-            this.onAirTitleClients.splice(index, 1);
-         }
-      });
-   };
-
-   public handleOnAirImageClients = async (req: Request, res: Response) => {
-      res.setHeader("Content-Type", "text/event-stream");
-      res.setHeader("Cache-Control", "no-cache");
-      res.setHeader("Connection", "keep-alive");
-
-      // Aggiungi il client alla lista
-      this.onAirImageClients.push(res);
+      const title = fs.readFileSync(this.titleFilePath, "utf8");
       const base64Image = await LiveService.getImageAsBase64(this.imageFilePath);
-      res.write(`data: ${JSON.stringify({ content: base64Image })}\n\n`);
+
+      res.write(`data: ${JSON.stringify({ cover: base64Image, title })}\n\n`);
 
       // Rimuovi il client alla chiusura della connessione
       req.on("close", () => {
-         const index = this.onAirImageClients.indexOf(res);
+         const index = this.onAirClients.indexOf(res);
          if (index !== -1) {
-            this.onAirImageClients.splice(index, 1);
+            this.onAirClients.splice(index, 1);
          }
       });
    };
@@ -98,8 +81,8 @@ export default class LiveService {
                debug("Nuovo Titolo", { data: content.toString(), status: "warning" });
 
                // Invia il contenuto ai client connessi
-               this.onAirTitleClients.forEach((client) => {
-                  client.write(`data: ${JSON.stringify({ content })}\n\n`);
+               this.onAirClients.forEach((client) => {
+                  client.write(`data: ${JSON.stringify({ title: content })}\n\n`);
                });
             }
          }
@@ -118,8 +101,8 @@ export default class LiveService {
                const base64Image = await LiveService.getImageAsBase64(this.imageFilePath);
 
                // Invia il contenuto ai client connessi
-               this.onAirImageClients.forEach((client) => {
-                  client.write(`data: ${JSON.stringify({ content: base64Image })}\n\n`);
+               this.onAirClients.forEach((client) => {
+                  client.write(`data: ${JSON.stringify({ cover: base64Image })}\n\n`);
                });
             }
          }
