@@ -10,15 +10,9 @@ permissions:
    id-token: write
 
 jobs:
-   build-and-deploy:
+   build:
       runs-on: ubuntu-latest
       environment: OCI
-      env:
-         OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
-         OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
-         OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
-         OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
-         OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
 
       steps:
          # Step 1: Checkout il codice
@@ -48,6 +42,16 @@ jobs:
               docker build -t ${{ secrets.OCR_REGISTRY }}/${{ secrets.OCR_TENANT }}/splash-api:${{ env.VERSION }} .
               docker push ${{ secrets.OCR_REGISTRY }}/${{ secrets.OCR_TENANT }}/splash-api:${{ env.VERSION }}
 
+   deploy:
+      runs-on: ubuntu-latest
+      environment: OCI
+      env:
+         OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
+         OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
+         OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
+         OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
+         OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
+      steps:
          # Step 6: Configure K8s on OCI
          - name: Configure Kubectl
            uses: oracle-actions/configure-kubectl-oke@v1.5.0
@@ -61,5 +65,5 @@ jobs:
          # Step 7: Deploy su Kubernetes
          - name: Deploy to Kubernetes
            run: |
-              kubectl set image deployment/splash-api splash-api=${{ secrets.OCR_REGISTRY }}/${{ secrets.OCR_TENANT }}/splash-api:${{ env.VERSION }}
-              kubectl rollout status deployment/splash-api
+              kubectl set image deployment/splash-api splash-api=${{ secrets.OCR_REGISTRY }}/${{ secrets.OCR_TENANT }}/splash-api:${{ env.VERSION }} -n splash
+              kubectl rollout status deployment/splash-api -n splash
