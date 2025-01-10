@@ -1,6 +1,6 @@
 {
    "name": "splashbe",
-   "version": "0.0.4",
+   "version": "0.0.6",
    "description": "Backend for radiosplash.it",
    "main": "index.js",
    "scripts": {
