@@ -29,8 +29,7 @@ jobs:
          - name: Get version from package.json
            id: version
            run: |
-              VERSION=$(node -p "require('./package.json').version")
-              echo "VERSION=$VERSION" >> $GITHUB_ENV
+              echo ::set-output name=version::$(node -p "require('./package.json').version")
 
          # Step 4: Login al registro di Oracle
          - name: Log in to Oracle Container Registry
@@ -39,8 +38,8 @@ jobs:
          # Step 5: Build e push dell'immagine Docker
          - name: Build and push Docker image
            run: |
-              docker build -t ${{ secrets.OCR_REGISTRY }}/${{ secrets.OCR_TENANT }}/splash-api:${{ env.VERSION }} .
-              docker push ${{ secrets.OCR_REGISTRY }}/${{ secrets.OCR_TENANT }}/splash-api:${{ env.VERSION }}
+              docker build -t ${{ secrets.OCR_REGISTRY }}/${{ secrets.OCR_TENANT }}/splash-api:${{ steps.version.outputs.version }} .
+              docker push ${{ secrets.OCR_REGISTRY }}/${{ secrets.OCR_TENANT }}/splash-api:${{ steps.version.outputs.version }}
 
    deploy:
       runs-on: ubuntu-latest
@@ -51,6 +50,7 @@ jobs:
          OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
          OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
          OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
+         VERSION: ${{ needs.build.outputs.version }}
       steps:
          # Step 6: Configure K8s on OCI
          - name: Configure Kubectl
