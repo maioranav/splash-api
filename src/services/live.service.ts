@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import * as fs from "fs";
 import path from "path";
 import { debug } from "../utils/debug.util";
+import multer from "multer";
 
 export default class LiveService {
    private static _instance: LiveService;
@@ -10,13 +11,39 @@ export default class LiveService {
    private titleFilePath = path.join("./meta", "OnAir.txt");
    private imageFilePath = path.join("./meta", "OnAir.jpg");
    private titleLastMod: number = 0;
-   private imageLastMod: number = 0;
+   private upload: multer.Multer;
 
    public static get instance(): LiveService {
       if (!this._instance) {
          this._instance = new LiveService();
       }
       return this._instance;
+   }
+
+   private constructor() {
+      this.upload = this.configureMulter();
+   }
+
+   private configureMulter() {
+      return multer({
+         storage: multer.diskStorage({
+            destination: (req, file, cb) => {
+               cb(null, path.join("./meta")); // Percorso della cartella dove salvare il file
+            },
+            filename: (req, file, cb) => {
+               cb(null, "OnAir.jpg"); // Nome fisso del file
+            }
+         }),
+         fileFilter: (req, file, cb) => {
+            // Controlla il tipo di file
+            if (file.mimetype === "image/jpeg") {
+               cb(null, true);
+            } else {
+               cb(new Error("Il file deve essere un JPG"));
+            }
+         },
+         limits: { fileSize: 5 * 1024 * 1024 } // Limite massimo del file (5 MB)
+      });
    }
 
    public handleOnAirTitleClients = (req: Request, res: Response) => {
@@ -165,6 +192,49 @@ export default class LiveService {
          };
 
          attemptRead(retries);
+      });
+   };
+
+   public updateOnAirTitleClients = (req: Request, res: Response) => {
+      try {
+         const content = req.body.content as string;
+         fs.writeFile(this.titleFilePath, content, (err) => {
+            if (err) {
+               debug("Errore durante la scrittura del file OnAir.txt:", {
+                  data: err,
+                  status: "error"
+               });
+               res.status(500).json({ message: "Errore durante la scrittura del file" });
+            } else {
+               debug("Titolo aggiornato", { data: content, status: "success" });
+               res.status(200).json({ message: "Titolo aggiornato con successo" });
+            }
+         });
+      } catch (err) {
+         debug("Errore durante la scrittura del file OnAir.txt:", {
+            data: err as object,
+            status: "error"
+         });
+         res.status(500).json({ message: "Errore durante la scrittura del file" });
+      }
+   };
+
+   public updateOnAirImageClients = (req: Request, res: Response) => {
+      const singleUpload = this.upload.single("file"); // 'file' è il nome del campo formData
+
+      singleUpload(req, res, (err) => {
+         if (err) {
+            // Gestione errori di upload
+            if (err instanceof multer.MulterError) {
+               return res.status(400).json({ message: `Errore Multer: ${err.message}` });
+            } else {
+               return res.status(400).json({ message: err.message });
+            }
+         }
+
+         // Successo
+         debug("Immagine aggiornata con successo", { status: "success" });
+         res.status(200).json({ message: "Immagine aggiornata con successo" });
       });
    };
 }
