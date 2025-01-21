@@ -17,7 +17,8 @@ export default class StaffService {
       const staff = await AppDataSource.getRepository(Staff).findOne({
          where: { id: id },
          relations: {
-            programmi: true
+            programmi: true,
+            social: true
          }
       });
       return staff;
