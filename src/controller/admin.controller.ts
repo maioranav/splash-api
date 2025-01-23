@@ -3,6 +3,7 @@ import { Controller } from "../types/main.type";
 import AdminService from "../services/admin.service";
 import { debug } from "../utils/debug.util";
 import RecaptchaMiddleware from "../middleware/recaptcha.middleware";
+import AuthMiddleware from "../middleware/auth.middleware";
 
 export default class AdminController implements Controller {
    public path = "/admin";
@@ -15,6 +16,7 @@ export default class AdminController implements Controller {
    private initRoutes() {
       this.router.post("/apilogin", this.login); // TODO: remove afert deployment
       this.router.post("/login", RecaptchaMiddleware.verifyRecaptcha, this.login);
+      this.router.get("/validate", AuthMiddleware.verifyToken, this.validateToken);
    }
 
    private login = async (request: Request, response: Response) => {
@@ -41,5 +43,9 @@ export default class AdminController implements Controller {
       } catch (error: any) {
          response.status(403).json({ error: error.message });
       }
+   };
+
+   private validateToken = async (request: Request, response: Response) => {
+      response.status(200).json({ status: true });
    };
 }
