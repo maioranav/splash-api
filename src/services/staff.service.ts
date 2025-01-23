@@ -8,7 +8,11 @@ export default class StaffService {
    public static getAll = async () => {
       const staff = await AppDataSource.getRepository(Staff).find({
          relations: {
+            programmi: true,
             social: true
+         },
+         order: {
+            nome: "ASC"
          }
       });
       return staff;
