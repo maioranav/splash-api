@@ -16,6 +16,7 @@ export default class StaffController implements Controller {
       this.router.get("/all", NonceMiddleware.verifyNonce, this.getAll);
       this.router.get("/:id", NonceMiddleware.verifyNonce, this.findByID);
       this.router.delete("/:id", AuthMiddleware.verifyToken, this.deleteByID);
+      this.router.put("/:id", AuthMiddleware.verifyToken, this.updateOne);
       this.router.post("/", AuthMiddleware.verifyToken, this.createOne);
    }
 
@@ -54,6 +55,16 @@ export default class StaffController implements Controller {
    private createOne = async (request: Request, response: Response) => {
       try {
          response.status(200).json(await StaffService.create(request.body));
+      } catch (error) {
+         response.status(400).json({ error });
+      }
+   };
+
+   private updateOne = async (request: Request, response: Response) => {
+      try {
+         const id = request.params["id"];
+
+         response.status(200).json(await StaffService.updateOne(id, request.body));
       } catch (error) {
          response.status(400).json({ error });
       }
