@@ -7,7 +7,7 @@ export class Appuntamento {
    @PrimaryGeneratedColumn("uuid")
    id!: string;
 
-   @ManyToOne(() => Programma)
+   @ManyToOne(() => Programma, { onDelete: "CASCADE" })
    programma!: Programma;
 
    @Column()

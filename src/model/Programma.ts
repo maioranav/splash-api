@@ -22,7 +22,7 @@ export class Programma {
    @Column()
    img!: string;
 
-   @ManyToOne(() => Staff)
+   @ManyToOne(() => Staff, { onDelete: "CASCADE" })
    artista!: Staff;
 
    @OneToOne(() => Podcast, (p: Podcast) => p.programma, { onDelete: "CASCADE", nullable: true })
