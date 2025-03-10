@@ -15,7 +15,10 @@ export default class ProgrammaService {
    };
 
    public static findByID = async (id: string) => {
-      const prog = await AppDataSource.getRepository(Programma).findOneBy({ id });
+      const prog = await AppDataSource.getRepository(Programma).findOne({
+         relations: { artista: true },
+         where: { id }
+      });
       return prog;
    };
 
