@@ -19,7 +19,7 @@ export class Programma {
    @Column()
    titolo!: string;
 
-   @Column()
+   @Column({ nullable: true })
    img!: string;
 
    @ManyToOne(() => Staff, { onDelete: "CASCADE" })
