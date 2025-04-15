@@ -2,6 +2,8 @@ import { validate } from "class-validator";
 import { AppDataSource } from "../config/data-source.config";
 import { DeepPartial } from "typeorm";
 import { Appuntamento } from "../model/Appuntamento";
+import { Programma } from "../model/Programma";
+import ProgrammaService from "./programma.service";
 
 export default class AppuntamentoService {
    public static getAll = async () => {
@@ -19,11 +21,17 @@ export default class AppuntamentoService {
    };
 
    public static create = async (data: DeepPartial<Appuntamento>) => {
-      const prog = AppDataSource.getRepository(Appuntamento).create(data);
-      const validationErrors = await validate(prog);
+      const app = AppDataSource.getRepository(Appuntamento).create(data);
+      if (!data?.programma?.id) throw new Error("Invalid show id");
+
+      const prog = await ProgrammaService.findByID(data?.programma?.id);
+      if (!prog) throw new Error("Show not found");
+      app.programma = prog;
+
+      const validationErrors = await validate(app);
       if (validationErrors?.length > 0) throw new Error(validationErrors + "");
 
-      return await AppDataSource.getRepository(Appuntamento).save(prog);
+      return await AppDataSource.getRepository(Appuntamento).save(app);
    };
 
    public static update = async (id: string, data: DeepPartial<Appuntamento>) => {
