@@ -12,6 +12,6 @@ export class PodcastSession {
    @Column()
    url!: string;
 
-   @ManyToOne(() => Podcast)
+   @ManyToOne(() => Podcast, { onDelete: "CASCADE" })
    podcast!: Podcast;
 }

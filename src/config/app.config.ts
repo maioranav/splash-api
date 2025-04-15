@@ -8,6 +8,7 @@ import ProgrammaController from "../controller/programma.controller";
 import LiveController from "../controller/live.controller";
 import AppuntamentoController from "../controller/appuntamento.controller";
 import MailerController from "../controller/mailer.controller";
+import PodcastController from "../controller/podcast.controller";
 import { FtpServerOptions } from "ftp-srv";
 
 // Environment constraints
@@ -24,7 +25,8 @@ export const apiConfig: ApiConfig = {
       new ProgrammaController(),
       new AppuntamentoController(),
       new LiveController(),
-      new MailerController()
+      new MailerController(),
+      new PodcastController()
    ]
 };
 
